@@ -1,0 +1,8 @@
+# Strategic Product Thinking, Module 1 Lab (Exercise 1)
+
+## Responses
+- **Write one feature from the map that, if an engineer asked “why is this a priority for our 12-week roadmap?”, you honestly could not give a strategic answer for.:** CSV extract of the water intake analytics, this is usually something rather uncommon and no used by target users of the following apps. Might be the case for very small number of users but not high stake issue for resolution.
+- **Write one feature that looks “correct” for the app but has zero strategic weight, you have no idea if it helps the company make money or whether a single user actually asked for it.:** Weather Adjustment of the water intake required. Body usually follows more standard pattern with change of those per time of the year. Adjusting this constantly based on the water might be more complex task for delivery than the potential value behind it.
+- **Compare V3 to your Step 1 baseline. What changed, and is the output objectively better, did the AI get smarter, or did your added PM knowledge (JTBD, effort/impact, retention) force it to be useful?:** AI agent using the upgraded prompt was able to use more correctly provided information and based on it build the startup information in the visually appealing and easily digestible way.
+Now this still requires the validation of knowledgeable person to bring the right final product to the board.
+- **Key takeaway: how does this prove the PM’s role is to think while the AI’s role is to execute?:** Ability to build is not the same as ability to comprehend and understand human and business needs, which is in particular role of the PM. Using his expertise to choose the right direction and use the AI to get to it faster than others.
