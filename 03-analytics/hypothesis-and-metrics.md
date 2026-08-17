@@ -1,17 +1,28 @@
-# Hypothesis & Success Metrics
+# Hypothesis & Success Metrics (Module 3)
 
-> Module 3 · Use Analytics and Metrics for Data-Driven Decisions — ★ Deliverable 3
->
-> _You'll complete this during Module 3._
+## Pre-work · Hypothesis check
+- **Role , who you are solving for (from M2):** Persona: "The Overwhelmed Browser" A casual-but-invested viewer sitting down for a specific mood (e.g., "quiet Sunday night") rather than a specific title.
+- **Goal , what this user is ultimately trying to achieve:** Wants to be matched to something that fits the moment without having to manually parse a 15,000-title warehouse.
+- **Friction / moment of misery , the specific pain blocking their goal:** There's no mood- or context-based browsing pathway — discovery is structured entirely around recency/genre rows, and natural-language search doesn't work reliably (only exact titles do). The volume of choice itself becomes the enemy: this is the user who eventually gives up trying anything new and defaults to rewatching a small known set — quiet disengagement, not a complaint ticket.
+- **Current workaround , the external tool or manual process they rely on (M2):** Tries a mood-based query anyway. They type something like "something light for a Sunday night" into search, assuming intent-based search works. It doesn't — natural-language and descriptive search queries return irrelevant results; only exact-title matching functions reliably. The tool silently fails their actual need. Falls back to manually scanning genre/recency rows. With no mood or occasion-based pathway, they're forced to browse the way the system is structured, not the way they think: discovery is structured entirely around recency/genre rows, not around "what fits my evening." They're doing the algorithm's filtering job by hand, one row at a time, against a 15,000-title catalog. Choice volume becomes aversive, not helpful. This is the critical inefficiency — more catalog should mean more options, but instead choice volume itself is a source of anxiety for some users, who default to being told what to watch rather than choosing. The "hack" of manual browsing doesn't scale down the decision, it scales up the fatigue. They quietly stop trying. Rather than escalating to support (no ticket gets filed) or even necessarily leaving for a named competitor, the terminal step is disengagement: a subset of users report discovery fatigue leading to disengagement from new content altogether, defaulting to repeat viewing of a small known set.
+- **Problem Hook , your one-sentence framing of the business crisis (M1):** StreamLine's quality-seeking users are quietly defecting to curated competitors because a 15,000-title warehouse of mid-tier content can't answer the only question that matters — "what should I watch tonight?" — and every month of inaction turns a fixable perception problem into a structural decline.
+- **Value Proposition , the outcome your initiative promised to deliver (M1):** Spotlight turns StreamLine's greatest weakness — an undifferentiated 15,000-title warehouse — into a curated, quality-forward platform that retains high-value users, attracts new quality-seeking subscribers, and self-funds through smarter license allocation — and it must launch now, before declining engagement, hardening brand perception, and competitor consolidation make the repositioning structurally impossible to execute.
 
-## Finalized product hypothesis
+## Read your data snapshots
+- **Does the funnel data confirm your M2 friction point, or does it tell a different story? Note where the numbers align with the qualitative pain you found and where they diverge.:** Based on the updated version of my persona and approach, yes. Users dropping after start playing realising that found title is not what they want a the moment also browsing titles time being second the longest activity.
+- **Do the retention patterns align with the workaround your M2 persona used to find content? Note what the Mo. 0→1 drop suggests about the onboarding experience your persona described as frustrating.:** Yes — the pattern is consistent with what M2 identified, though the heatmap can only show correlation, not confirm the specific mechanism (mood-search failure) as the cause.
+- **Does the LTV gap and the content mix (61% trending for Wanderers) confirm the moment of misery your persona described? Note which segment your persona is in and whether the data confirms their pain.:** Upon investigating the data I have defined that my first persona was targeting the segment which performs well while the one which works investigating was the Wanderers, taking this into a count I have updated my persona to be a wanderer.
+- **Does the low adoption confirm your persona is burdened by tools they don’t use? Note whether the low scheduling adoption (42%) for coordinators matches your M2 moment of misery.:** _(not filled in)_
+- **Does the workflow data match the manual process or hack you documented in M2? Note whether the specific drop-offs or time gaps explain why your persona avoids the digital tool.:** _(not filled in)_
+- **Look at the CSAT heatmap. Which specific cell most directly maps to your persona’s friction? Note how the NPS trend justifies the urgency of your M1 Problem Hook.:** _(not filled in)_
 
-> Based on [qual + quant evidence], I believe that [solving X] for [persona] will result in [outcome], as measured by a [X%] change in [success metric]. I will protect [guardrail metric] and make a go/no-go decision after [decision window].
-
-## Success metrics
-
-| Metric | Type | Target | Why it matters |
-|---|---|---|---|
-| _North-star_ | | _____ | _____ |
-| _Leading indicator_ | | _____ | _____ |
-| _Guardrail_ | | _____ | _____ |
+## Step 3 · Craft your hypothesis
+- **Qualitative evidence (from M2) , quote the specific friction / moment of misery for your persona:** _(not filled in)_
+- **Quantitative evidence (from M3) , name the metric or data point that confirms the pain; cite the number:** _(not filled in)_
+- **Persona , role, goal, and the friction you confirmed in the reconciliation steps:** _(not filled in)_
+- **Problem you are solving , one sentence describing the specific friction this initiative removes:** _(not filled in)_
+- **Strategic outcome , what behaviour change do you expect, and how does it map to retention / revenue / churn?:** _(not filled in)_
+- **Primary success metric (initiative signal) , the leading indicator that tells you the gap is closing:** _(not filled in)_
+- **Guardrail metric (product signal) , the metric that must NOT drop; it protects your existing base:** _(not filled in)_
+- **Decision window , how much time or data before you scale, pivot, or kill? minimum threshold to proceed?:** _(not filled in)_
+- **Draft your full hypothesis sentence , one to three sentences; quote the metric, name the persona, name the outcome:** _(not filled in)_
