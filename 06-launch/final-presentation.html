@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>StreamLine Spotlight — Mood-Based Entry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&family=Lato:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07162C;
+    --bg-2:#0b1f3d;
+    --fg:#ffffff;
+    --muted:#ffffff;
+    --muted-op:0.62;
+    --orange:#fb923c;
+    --orange-soft:#fdba74;
+    --cyan:#22d3ee;
+    --teal:#34d399;
+    --blue:#60a5fa;
+    --violet:#a78bfa;
+    --pink:#f472b6;
+    --border:rgba(251,146,60,0.25);
+    --card:rgba(255,255,255,0.03);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Lato', sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,h4{
+    font-family:'Poppins', sans-serif;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+
+  .mono{
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    color:var(--orange-soft);
+    font-size:0.72rem;
+    font-weight:500;
+    display:inline-flex;
+    align-items:center;
+    gap:0.55em;
+    margin-bottom:1.1rem;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px;
+    height:1px;
+    background:var(--orange-soft);
+    display:inline-block;
+  }
+
+  section{
+    min-height:100vh;
+    min-height:100svh;
+    width:100%;
+    scroll-snap-align:start;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:6vh 8vw;
+    position:relative;
+    overflow:hidden;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+
+  .wrap{
+    scroll-snap-type:y mandatory;
+    height:100vh;
+    height:100svh;
+    overflow-y:auto;
+  }
+
+  /* ambient background glows */
+  section::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse 900px 500px at 85% -10%, rgba(251,146,60,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at -10% 110%, rgba(96,165,250,0.08), transparent 60%);
+    z-index:0;
+  }
+  section > *{position:relative; z-index:1;}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:1.6rem 1.8rem;
+  }
+
+  .hero-card{
+    background:linear-gradient(145deg, rgba(251,146,60,0.10), rgba(34,211,238,0.04));
+    border:1px solid var(--border);
+    box-shadow:0 20px 60px -20px rgba(251,146,60,0.18);
+    border-radius:16px;
+  }
+
+  a.btn{
+    display:inline-flex;
+    align-items:center;
+    gap:0.6em;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.85rem;
+    font-weight:500;
+    text-decoration:none;
+    color:var(--bg);
+    background:var(--orange);
+    padding:0.85em 1.5em;
+    border-radius:999px;
+    box-shadow:0 10px 30px -8px rgba(251,146,60,0.5);
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  a.btn:hover{transform:translateY(-2px); box-shadow:0 14px 34px -6px rgba(251,146,60,0.6);}
+  a.btn.ghost{
+    background:transparent;
+    color:var(--fg);
+    border:1px solid rgba(255,255,255,0.25);
+    box-shadow:none;
+  }
+  a.btn.ghost:hover{border-color:var(--orange-soft); color:var(--orange-soft);}
+
+  .pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.04em;
+    padding:0.45em 0.9em;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.18);
+    display:inline-flex;
+    align-items:center;
+    gap:0.5em;
+    color:var(--fg);
+    background:rgba(255,255,255,0.03);
+  }
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);}
+
+  .muted{opacity:var(--muted-op);}
+
+  /* progress bar */
+  #progress{
+    position:fixed;
+    top:0; left:0;
+    height:3px;
+    width:0%;
+    background:linear-gradient(90deg, var(--orange), var(--cyan));
+    z-index:50;
+    transition:width 0.1s linear;
+  }
+
+  /* dot nav */
+  #dotnav{
+    position:fixed;
+    right:2.2vw;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    z-index:50;
+  }
+  #dotnav button{
+    width:9px; height:9px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.35);
+    background:transparent;
+    cursor:pointer;
+    padding:0;
+    position:relative;
+    transition:all 0.25s ease;
+  }
+  #dotnav button.active{
+    background:var(--orange);
+    border-color:var(--orange);
+    box-shadow:0 0 0 4px rgba(251,146,60,0.18);
+  }
+  #dotnav button::after{
+    content attr(data-label);
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.65rem;
+    letter-spacing:0.06em;
+    color:var(--fg);
+    background:rgba(7,22,44,0.92);
+    border:1px solid var(--border);
+    padding:0.3em 0.7em;
+    border-radius:6px;
+    white-space:nowrap;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.15s ease;
+  }
+  #dotnav button:hover::after{opacity:1;}
+
+  table{border-collapse:collapse; width:100%;}
+  th,td{
+    text-align:left;
+    padding:0.6em 0.8em;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    font-size:0.86rem;
+    vertical-align:top;
+  }
+  th{
+    font-family:'IBM Plex Mono', monospace;
+    text-transform:uppercase;
+    font-size:0.68rem;
+    letter-spacing:0.08em;
+    color:var(--orange-soft);
+    font-weight:500;
+  }
+
+  .grid{display:grid; gap:1.1rem;}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:1fr 1fr 1fr;}
+  .g4{grid-template-columns:repeat(4,1fr);}
+
+  .metric-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:500;
+    font-size:2.1rem;
+    line-height:1;
+  }
+  .metric-label{
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--fg);
+    opacity:0.55;
+    margin-top:0.5em;
+  }
+
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.66rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    padding:0.25em 0.6em;
+    border-radius:5px;
+    font-weight:500;
+  }
+  .tag.now{background:rgba(251,146,60,0.16); color:var(--orange-soft); border:1px solid rgba(251,146,60,0.35);}
+  .tag.next{background:rgba(96,165,250,0.14); color:var(--blue); border:1px solid rgba(96,165,250,0.32);}
+  .tag.later{background:rgba(167,139,250,0.14); color:var(--violet); border:1px solid rgba(167,139,250,0.3);}
+  .tag.cut{background:rgba(244,114,182,0.12); color:var(--pink); border:1px solid rgba(244,114,182,0.28);}
+
+  .section-title{
+    font-size:clamp(1.7rem, 2.6vw, 2.5rem);
+    font-weight:800;
+    margin-bottom:0.4rem;
+  }
+  .section-kicker{
+    font-size:1rem;
+    color:var(--fg);
+    opacity:0.6;
+    margin-bottom:2rem;
+    max-width:60ch;
+  }
+
+  blockquote{
+    margin:0;
+    padding-left:1.1em;
+    border-left:2px solid var(--orange);
+    font-style:italic;
+    opacity:0.92;
+  }
+
+  ::selection{background:var(--orange); color:var(--bg);}
+
+  ul.clean{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.7em;}
+  ul.clean li{padding-left:1.3em; position:relative;}
+  ul.clean li::before{
+    content:"";
+    position:absolute;
+    left:0; top:0.55em;
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--cyan);
+  }
+
+  .scrollhint{
+    position:absolute;
+    bottom:4vh;
+    left:8vw;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    opacity:0.4;
+    display:flex;
+    align-items:center;
+    gap:0.6em;
+  }
+  .scrollhint span{
+    width:1px; height:22px;
+    background:linear-gradient(var(--orange-soft), transparent);
+    display:inline-block;
+    animation:scrolldrop 1.8s ease-in-out infinite;
+  }
+  @keyframes scrolldrop{
+    0%{transform:translateY(0); opacity:0;}
+    30%{opacity:1;}
+    100%{transform:translateY(14px); opacity:0;}
+  }
+
+  @media (max-width:900px){
+    .g2,.g3,.g4{grid-template-columns:1fr;}
+    section{padding:9vh 6vw;}
+    #dotnav{display:none;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .scrollhint span{animation:none;}
+    a.btn:hover{transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<nav id="dotnav" aria-label="Slide navigation"></nav>
+
+<div class="wrap" id="scrollwrap">
+
+  <!-- 1. COVER -->
+  <section id="cover">
+    <div class="eyebrow">Product School · Final Project</div>
+    <h1 style="font-size:clamp(2.2rem,5vw,4.2rem); font-weight:900; max-width:16ch; line-height:1.04;">
+      StreamLine <span style="color:var(--orange);">Spotlight</span><br>Mood-Based Entry
+    </h1>
+    <p class="muted" style="font-size:clamp(1rem,1.4vw,1.25rem); max-width:58ch; margin-top:1.4rem;">
+      For quality-seeking StreamLine subscribers currently defecting to curated competitors, we will turn StreamLine's greatest weakness — an undifferentiated 15,000-title warehouse — into a curated, quality-forward platform (Spotlight).
+    </p>
+    <div style="margin-top:1.6rem; font-family:'IBM Plex Mono', monospace; font-size:0.82rem; opacity:0.55;">
+      Fedir Redko · Product Management Cohort · Aug 2026
+    </div>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:2.2rem;">
+      <a class="btn" href="https://lovable.dev/preview/l7ZzBqumJYewAz6HfAjjprGroM4ptSkZ" target="_blank" rel="noopener">▶ View Prototype</a>
+      <a class="btn ghost" href="https://github.com/redkof506/pm-final-project" target="_blank" rel="noopener">↗ Repo</a>
+    </div>
+    <div class="scrollhint"><span></span>Scroll</div>
+  </section>
+
+  <!-- 2. STRATEGY (Slide 5) -->
+  <section id="strategy">
+    <div class="eyebrow">Slide 5 · Strategy · Module 1, Deliverable 1</div>
+    <h2 class="section-title">The problem hook &amp; value proposition</h2>
+    <p class="section-kicker">Bridging StreamLine's strategic crisis to one user's exact moment of misery.</p>
+
+    <div class="grid g2" style="align-items:stretch;">
+      <div class="card">
+        <div class="tag now" style="margin-bottom:0.9em;">Strategic crisis</div>
+        <p style="font-size:0.95rem;">StreamLine has no specialty to anchor a stable, growing user base. Without an answer to "is there anything good to watch?", the user base compounds its shrinkage until it crosses a critical mass — leaving no room to fund the innovation needed to win users back without deep, high-stakes cuts.</p>
+      </div>
+      <div class="card">
+        <div class="tag cut" style="margin-bottom:0.9em;">Moment of misery</div>
+        <p style="font-size:0.95rem;">Users can't find quality content on-platform, so they defect to competitors, rotate subscriptions toward rivals with prestige titles, rent transactionally, or pirate. This is systemic — a result of ongoing strategy drift, not an isolated feature gap.</p>
+      </div>
+    </div>
+
+    <div class="hero-card" style="margin-top:1.6rem; padding:1.9rem 2.1rem;">
+      <div class="eyebrow" style="margin-bottom:0.7em;">Data-backed hypothesis · Module 3</div>
+      <p style="font-size:1rem; margin:0;">
+        Based on funnel evidence showing a drop from <strong style="color:var(--orange-soft);">71% → 29%</strong> between Browse Titles and Start Playing, we believe reducing choice friction for <strong>"The Overwhelmed Browser"</strong> via a <strong style="color:var(--cyan);">Mood-Based Entry Point</strong> will drive a <strong style="color:var(--teal);">+5pp</strong> absolute lift in Homepage Visit → Start Playing conversion (baseline 29%, MDE 5pp, 1,354 users/arm, 50/50 split, α = 0.05) — while protecting Power User performance as a non-inferiority guardrail. Go/no-go after 8 weeks or full sample, whichever comes second.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. RESEARCH (Slide 6) -->
+  <section id="research">
+    <div class="eyebrow">Slide 6 · Research · Module 2</div>
+    <h2 class="section-title">Competitive workaround &amp; journey map</h2>
+    <p class="section-kicker">"The Overwhelmed Browser" — a casual-but-invested viewer sitting down for a mood, not a title.</p>
+
+    <div class="grid g2" style="align-items:start;">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.8em;">Where users go instead</div>
+        <ul class="clean">
+          <li>Web search to find an exact title, then locate it in-app</li>
+          <li>YouTube, as a direct alternative</li>
+          <li>A competitor's editorial email</li>
+          <li>A friend's suggestion</li>
+        </ul>
+        <div style="margin-top:1.3em; padding-top:1.1em; border-top:1px solid rgba(255,255,255,0.08);">
+          <blockquote style="font-size:0.92rem;">"Something light for a Sunday night" — typed almost verbatim, answered with silence or noise.</blockquote>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.8em;">Core frustration</div>
+        <p style="font-size:0.92rem;">Natural-language and descriptive search return irrelevant results — only exact-title matching works reliably. That's the pivot point: the moment the tool reveals it was built to look things up, not to understand intent. A subset of users report discovery fatigue leading to quiet disengagement — defaulting to a small known rewatch set, never filing a ticket.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:1.8rem;">
+      <div class="eyebrow" style="margin-bottom:1em;">Journey — the four-step spiral</div>
+      <div class="grid g4">
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <div class="metric-label mono" style="color:var(--cyan); opacity:1; margin-bottom:0.5em;">01 · Tries mood search</div>
+          <p style="font-size:0.83rem; margin:0;">Assumes intent-based search works. It doesn't.</p>
+        </div>
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <div class="metric-label mono" style="color:var(--blue); opacity:1; margin-bottom:0.5em;">02 · Falls back to rows</div>
+          <p style="font-size:0.83rem; margin:0;">Manually filters 15,000 titles the system's way, not their own.</p>
+        </div>
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <div class="metric-label mono" style="color:var(--violet); opacity:1; margin-bottom:0.5em;">03 · Choice becomes aversive</div>
+          <p style="font-size:0.83rem; margin:0;">More catalog scales up fatigue, not options.</p>
+        </div>
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <div class="metric-label mono" style="color:var(--pink); opacity:1; margin-bottom:0.5em;">04 · Quietly stops trying</div>
+          <p style="font-size:0.83rem; margin:0;">No ticket filed — just disengagement and rewatch defaults.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. BLUEPRINT (Slide 7) -->
+  <section id="blueprint">
+    <div class="eyebrow">Slide 7 · Blueprint · Module 4, Deliverable 4</div>
+    <h2 class="section-title">Roadmap, PRD &amp; prototype</h2>
+    <p class="section-kicker">Team: 2 engineers + 1 designer · Primary metric: 30+ min sessions, target +10%</p>
+
+    <div class="grid g4" style="margin-bottom:1.6rem;">
+      <div class="card" style="padding:1.2rem 1.3rem;">
+        <div class="tag now" style="margin-bottom:0.8em;">Now</div>
+        <p style="font-size:0.82rem; margin:0;"><strong>A1</strong> Spotlight Curated Rail<br><strong>A4</strong> Mood-Based Entry Point</p>
+      </div>
+      <div class="card" style="padding:1.2rem 1.3rem;">
+        <div class="tag next" style="margin-bottom:0.8em;">Next</div>
+        <p style="font-size:0.82rem; margin:0;"><strong>A2</strong> "Why You'll Love This" Label</p>
+      </div>
+      <div class="card" style="padding:1.2rem 1.3rem;">
+        <div class="tag later" style="margin-bottom:0.8em;">Later</div>
+        <p style="font-size:0.82rem; margin:0;"><strong>A3</strong> Hidden Gem Badge<br><strong>A5</strong> Personalized Queue<br><strong>A6</strong> Digest Email</p>
+      </div>
+      <div class="card" style="padding:1.2rem 1.3rem;">
+        <div class="tag cut" style="margin-bottom:0.8em;">Cut</div>
+        <p style="font-size:0.82rem; margin:0;"><strong>A7</strong> Curator Profiles<br><strong>A8</strong> Watch Party<br><strong>A9</strong> Filter Engine<br><strong>A10</strong> Offline Download</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="align-items:start;">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.8em;">PRD · finalized must-haves</div>
+        <ul class="clean" style="font-size:0.86rem;">
+          <li>Fixed mood selector, non-blocking placement — never a forced gate</li>
+          <li>One-tap skip to standard browse — protects the guardrail structurally</li>
+          <li>Rail actually filters on mood selection</li>
+          <li>Minimum viable editorial mood-tagging, enough per mood to avoid dead ends</li>
+          <li>Session-length instrumentation attributed to entry path</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.8em;">Demoted · Must → Should/Won't</div>
+        <p style="font-size:0.86rem;">Segment tagging on every event (Power / Casual / Wanderer) — fully removed since user type and feature-usage initiation can already be defined without it.</p>
+        <div style="margin-top:1.3em; padding-top:1.1em; border-top:1px solid rgba(255,255,255,0.08);">
+          <p style="font-size:0.86rem; margin:0;">The PRD makes explicit what a vague brief would miss: the feature must never encroach on core app functions, and must return to standard search/browse fast and frictionlessly.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.6rem;">
+      <a class="btn" href="https://lovable.dev/preview/l7ZzBqumJYewAz6HfAjjprGroM4ptSkZ" target="_blank" rel="noopener">▶ View Prototype</a>
+    </div>
+  </section>
+
+  <!-- 5. VALIDATION (Slide 8) -->
+  <section id="validation">
+    <div class="eyebrow">Slide 8 · Validation · Module 5, Deliverable 5</div>
+    <h2 class="section-title">Experimentation plan</h2>
+    <p class="section-kicker">A/B test validating Mood-Based Entry Point before full-scale development.</p>
+
+    <div class="hero-card" style="padding:1.8rem 2rem; margin-bottom:1.5rem;">
+      <div class="eyebrow" style="margin-bottom:0.7em;">Hypothesis under test</div>
+      <p style="font-size:0.94rem; margin:0;">Mood-Based Entry Point will reduce choice friction for "The Overwhelmed Browser," increasing Homepage Visit → Start Playing conversion by <strong style="color:var(--orange-soft);">5%</strong>, while Power User segment performance must not drop — decided within 8 weeks.</p>
+    </div>
+
+    <div class="grid g3">
+      <div class="card">
+        <div class="metric-label" style="margin-bottom:0.6em; opacity:1; color:var(--cyan);">Control (A)</div>
+        <p style="font-size:0.85rem; margin:0;">Standard entry screen — no mood-based recommendation.</p>
+      </div>
+      <div class="card">
+        <div class="metric-label" style="margin-bottom:0.6em; opacity:1; color:var(--orange-soft);">Variant (B)</div>
+        <p style="font-size:0.85rem; margin:0;">Mood chips on entry filter the rail on selection.</p>
+      </div>
+      <div class="card">
+        <div class="metric-label" style="margin-bottom:0.6em; opacity:1; color:var(--teal);">Held constant</div>
+        <p style="font-size:0.85rem; margin:0;">Skip path returns users to the identical standard screen in both arms.</p>
+      </div>
+    </div>
+
+    <div class="grid g4" style="margin-top:1.5rem;">
+      <div class="card" style="text-align:center; padding:1.4rem 1rem;">
+        <div class="metric-num" style="color:var(--orange);">29%</div>
+        <div class="metric-label">Baseline conversion</div>
+      </div>
+      <div class="card" style="text-align:center; padding:1.4rem 1rem;">
+        <div class="metric-num" style="color:var(--cyan);">5%</div>
+        <div class="metric-label">MDE (absolute)</div>
+      </div>
+      <div class="card" style="text-align:center; padding:1.4rem 1rem;">
+        <div class="metric-num" style="color:var(--teal);">1,354</div>
+        <div class="metric-label">Users / arm</div>
+      </div>
+      <div class="card" style="text-align:center; padding:1.4rem 1rem;">
+        <div class="metric-num" style="color:var(--violet);">8 wks</div>
+        <div class="metric-label">Fixed read window</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <table>
+        <tr><th style="width:18%;">Ship</th><td>Conversion improves ≥5% at p&lt;0.05 <em>and</em> Power User performance does not drop ≥0.5 pts, after 8 weeks.</td></tr>
+        <tr><th>Iterate</th><td>Direction is positive but lift is below the MDE.</td></tr>
+        <tr><th>Kill</th><td style="border-bottom:none;">Primary metric shows no improvement or moves negatively.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 6. LAUNCH (Slide 9) -->
+  <section id="launch">
+    <div class="eyebrow">Slide 9 · Launch · Module 6, Deliverable 6</div>
+    <h2 class="section-title">GTM strategy &amp; success dashboard</h2>
+    <p class="section-kicker">Staged rollout from owned channels to full multi-channel push.</p>
+
+    <div class="grid g2" style="margin-bottom:1.6rem;">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.9em;">Launch profile</div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.6em;">
+          <span class="pill"><span class="dot"></span>Goal: Engagement</span>
+          <span class="pill"><span class="dot" style="background:var(--blue);"></span>Audience: active users, ≥1x/14 days</span>
+          <span class="pill"><span class="dot" style="background:var(--violet);"></span>Starting tier: M → L</span>
+          <span class="pill"><span class="dot" style="background:var(--pink);"></span>Channels: Email → Onboarding → Paid social</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.9em;">Phased rollout</div>
+        <p style="font-size:0.85rem; margin:0;"><strong style="color:var(--orange-soft);">Phase 1, Beta (wk 1–8):</strong> owned channels only — email + onboarding path, no paid spend.<br><strong style="color:var(--blue);">Phase 2, Launch:</strong> escalates to Tier L only if Phase 1 clears the engagement guardrail.<br><strong style="color:var(--pink);">Phase 3, Full campaign:</strong> adds paid social (TikTok +) for multi-channel push.</p>
+      </div>
+    </div>
+
+    <div class="grid g2">
+      <div class="hero-card" style="padding:1.6rem 1.8rem;">
+        <div class="metric-label" style="opacity:1; color:var(--teal); margin-bottom:0.6em;">Success metric</div>
+        <div style="display:flex; align-items:baseline; gap:0.8em;">
+          <span class="metric-num" style="color:var(--teal);">29% → ~34%</span>
+        </div>
+        <p style="font-size:0.85rem; margin-top:0.6em;">Homepage Visit → Start Playing conversion, last 90 days.</p>
+      </div>
+      <div class="card" style="border-color:rgba(244,114,182,0.35);">
+        <div class="metric-label" style="opacity:1; color:var(--pink); margin-bottom:0.6em;">Bad signal / guardrail</div>
+        <p style="font-size:0.9rem; margin:0;">Power User weekly watch hours must show <strong>no negative movement</strong> vs. baseline — monitored continuously through every launch phase.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. STORY (Slide 10) -->
+  <section id="story">
+    <div class="eyebrow">Slide 10 · Story</div>
+    <h2 class="section-title">Friction, the aha moment &amp; what's next</h2>
+
+    <div class="grid g2" style="align-items:start;">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.8em; color:var(--pink);">Friction</div>
+        <p style="font-size:0.88rem;">Keeping personas, journey maps, MoSCoW, and effort/value scoring honest with each other. A feature could look like an obvious "Must Have" on MoSCoW while scoring only moderately on effort/value — neither view alone said whether that was a real conflict. The journey map became the tie-breaker: "which specific friction, for which specific persona, does this actually resolve?"</p>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.8em; color:var(--teal);">Aha moment</div>
+        <p style="font-size:0.88rem;">The highest-scored feature on paper wasn't resolving the moment of highest friction in the real journey — it was resolving a step that looked important because it was easy to describe. Prioritization stopped being spreadsheet scoring and became reading a story carefully enough to know which sentence needed rewriting.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:1.6rem;">
+      <div class="eyebrow" style="margin-bottom:1em;">Key takeaways</div>
+      <div class="grid g4">
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <p style="font-size:0.8rem; margin:0;">Personas earn their keep only when load-bearing — as the actual arbiter of prioritization disputes.</p>
+        </div>
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <p style="font-size:0.8rem; margin:0;">Journey maps expose friction that scoring models miss entirely.</p>
+        </div>
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <p style="font-size:0.8rem; margin:0;">A framework is a conversation-starter for trade-offs, not a verdict.</p>
+        </div>
+        <div class="card" style="padding:1.1rem 1.2rem;">
+          <p style="font-size:0.8rem; margin:0;">Format constraints — like an interactive HTML roadmap — are a design tool, not just output.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. THANK YOU / SUBMIT -->
+  <section id="submit">
+    <div class="eyebrow">Submission</div>
+    <h2 style="font-size:clamp(2rem,4vw,3.4rem); font-weight:900;">Thank you.</h2>
+    <p class="muted" style="font-size:1.05rem; max-width:52ch; margin-top:0.8rem;">StreamLine Spotlight — turning a 15,000-title warehouse into a curated, quality-forward experience.</p>
+
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:2rem;">
+      <a class="btn" href="https://github.com/redkof506/pm-final-project" target="_blank" rel="noopener">↗ github.com/redkof506/pm-final-project</a>
+      <span class="pill mono">Product Management Cohort · Aug 2026</span>
+    </div>
+
+    <div class="hero-card" style="margin-top:2.2rem; padding:1.4rem 1.8rem; display:inline-flex; align-items:center; gap:1em; max-width:fit-content;">
+      <span class="dot" style="width:8px; height:8px; border-radius:50%; background:var(--teal); display:inline-block;"></span>
+      <span class="mono" style="font-size:0.85rem;">Submit to the learning platform</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  const sections = Array.from(document.querySelectorAll('section'));
+  const wrap = document.getElementById('scrollwrap');
+  const progress = document.getElementById('progress');
+  const dotnav = document.getElementById('dotnav');
+
+  sections.forEach((sec, i) => {
+    const label = sec.querySelector('.eyebrow') ? sec.querySelector('.eyebrow').textContent.split('·')[0].trim() : ('Slide ' + (i+1));
+    const btn = document.createElement('button');
+    btn.setAttribute('data-label', label);
+    btn.setAttribute('aria-label', 'Go to ' + label);
+    btn.addEventListener('click', () => sec.scrollIntoView({behavior:'smooth'}));
+    dotnav.appendChild(btn);
+  });
+  const dots = Array.from(dotnav.children);
+
+  function currentIndex(){
+    const y = wrap.scrollTop + wrap.clientHeight * 0.4;
+    let idx = 0;
+    sections.forEach((sec, i) => { if (sec.offsetTop <= y) idx = i; });
+    return idx;
+  }
+
+  function updateUI(){
+    const max = wrap.scrollHeight - wrap.clientHeight;
+    const pct = max > 0 ? (wrap.scrollTop / max) * 100 : 0;
+    progress.style.width = pct + '%';
+    const idx = currentIndex();
+    dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+  }
+
+  wrap.addEventListener('scroll', updateUI, {passive:true});
+  window.addEventListener('resize', updateUI);
+  updateUI();
+
+  document.addEventListener('keydown', (e) => {
+    const idx = currentIndex();
+    if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown'){
+      e.preventDefault();
+      const next = sections[Math.min(idx+1, sections.length-1)];
+      next.scrollIntoView({behavior:'smooth'});
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp'){
+      e.preventDefault();
+      const prev = sections[Math.max(idx-1, 0)];
+      prev.scrollIntoView({behavior:'smooth'});
+    } else if (e.key === 'Home'){
+      e.preventDefault();
+      sections[0].scrollIntoView({behavior:'smooth'});
+    } else if (e.key === 'End'){
+      e.preventDefault();
+      sections[sections.length-1].scrollIntoView({behavior:'smooth'});
+    } else if (e.key === 'Escape'){
+      document.activeElement && document.activeElement.blur();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
